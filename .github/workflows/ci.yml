@@ -27,7 +27,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint
 
       - name: Build Next.js
         env:
