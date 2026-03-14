@@ -6,6 +6,8 @@ if (!MONGODB_URI) {
   throw new Error("Missing MONGODB_URI");
 }
 
+const uri: string = MONGODB_URI;
+
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -27,7 +29,7 @@ export async function connectDB() {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+    cached.promise = mongoose.connect(uri, {
       dbName: "orderflow",
       autoIndex: true,
     });
