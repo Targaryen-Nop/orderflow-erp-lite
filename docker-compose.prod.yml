@@ -2,21 +2,6 @@ version: "3.9"
 
 services:
 
-  mongo:
-    image: mongo:7
-    container_name: orderflow-mongo
-    restart: always
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
   orderflow-app:
     image: ${DOCKER_IMAGE}
     container_name: orderflow-app
@@ -26,14 +11,8 @@ services:
     environment:
       NODE_ENV: production
       MONGODB_URI: ${MONGODB_URI}
-    depends_on:
-      mongo:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
       interval: 20s
       timeout: 5s
       retries: 5
-
-volumes:
-  mongo-data:
