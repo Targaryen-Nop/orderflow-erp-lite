@@ -30,7 +30,10 @@ export default function ProductsPage() {
   }
 
   useEffect(() => {
-    void load();
+    const run = async () => {
+      await load();
+    };
+    run();
   }, []);
 
   async function onSubmit(e: React.FormEvent) {
