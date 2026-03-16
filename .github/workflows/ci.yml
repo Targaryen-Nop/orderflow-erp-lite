@@ -31,5 +31,5 @@ jobs:
 
       - name: Build Next.js
         env:
-          MONGODB_URI: mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.7.0
+          MONGODB_URI: mongodb+srv://nopparat:%240995960320@cluster0.kdjxvwh.mongodb.net/
         run: npm run build
