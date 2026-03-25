@@ -1,31 +1,91 @@
 # OrderFlow ERP Lite
 
-Next.js + MongoDB demo project for interview use.
+Lightweight ERP system focused on order, stock, and operational workflow management.
 
-## Features
-- Product master
-- Stock balance + stock movement ledger
-- CO / Invoice / Payment
-- Running number generation
-- ACID transaction with MongoDB session
-- Negative stock prevention with atomic reservation
+---
 
-## Important
-MongoDB transactions require **replica set** mode, even on local.
+## 🚀 Overview
 
-Example local connection:
+OrderFlow ERP Lite is a full-stack system designed to simulate real-world ERP operations, focusing on **order processing, stock management, and financial workflows**.
 
-```env
-MONGODB_URI=mongodb://127.0.0.1:27017/orderflow?replicaSet=rs0
+This project emphasizes:
+- Data consistency
+- System reliability
+- Handling real-world edge cases (e.g., concurrent orders, stock validation)
+- Scalable architecture design
+
+---
+
+## 🧠 Architecture
+
+- **Frontend**: Next.js (App Router)
+- **Backend**: Node.js (Express.js)
+- **Database**: MongoDB (with transaction support)
+
+### Design Principles
+
+- Separation of Concerns (Controller → Service → Repository)
+- Service Layer handles business logic
+- Database transactions for critical operations
+- Modular architecture for scalability
+
+---
+
+## 🔥 Key Features
+
+### 1. Order Lifecycle Management
+- Create Customer Orders
+- Generate Invoices
+- Track Payments
+- Manage full order → invoice → payment workflow
+
+---
+
+### 2. Stock Reservation System (Critical)
+
+Prevents overselling under concurrent requests.
+
+**Problem:**
+Multiple orders at the same time may cause negative stock.
+
+**Solution:**
+- Use reservation-based logic
+- Use MongoDB transactions
+- Ensure atomic updates
+
+```ts
+await session.withTransaction(async () => {
+  const stock = await Stock.findById(productId).session(session)
+
+  if (stock.available < qty) {
+    throw new Error('Insufficient stock')
+  }
+
+  await Stock.updateOne(
+    { _id: productId },
+    { $inc: { reserved: qty } },
+    { session }
+  )
+})
 ```
+---
+The system is designed with a layered architecture to ensure separation of concerns, scalability, and maintainability.
+Critical business operations such as stock reservation are handled within transaction boundaries to prevent data inconsistency under concurrent requests.
 
-## Run
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-## Seed data
-POST `/api/seed`
+## 🧱 Architecture Diagram
+[ Next.js Client ]
+        │
+        ▼
+[ Express API Layer ]
+        │
+        ▼
+[ Service Layer ]
+- Business Logic
+- Transaction Handling
+        │
+        ▼
+[ Repository Layer ]
+        │
+        ▼
+[ MongoDB ]
+(ACID Transactions)
